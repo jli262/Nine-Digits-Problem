@@ -46,12 +46,12 @@ int cantorExpansion(int input[]) {
     return result;
 }
 
-int* reverseCantor(int input) {
-    int result[9];
+vector<int> reverseCantor(int input) {
+    vector<int> result;
     for (int i = 0; i < 9; i++) {
         int tmp = input / fac[8 - i];
-        input = fac[8 - i];
-        result[i] = i + tmp + 1;
+        input %= fac[8 - i];
+        result.push_back(i + tmp);
     }
     return result;
 }
@@ -153,7 +153,7 @@ void print() {
     stack<char> opr;
     int cur = 0;
     while (cases[cur] != -1) {
-        int* board = reverseCantor(cur);
+        vector<int> board = reverseCantor(cur);
         for (int i = 0; i < 9; i++) {
             if (board[i] == 0) {
                 opr.push('A' + i);
@@ -168,7 +168,7 @@ void print() {
 }
 
 int main() {
-
+    //315027684
     for (int i = 0; i < 9; i++) {
         char x;
         cin >> x;
