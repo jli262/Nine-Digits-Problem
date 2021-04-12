@@ -7,19 +7,17 @@ using namespace std;
 
 const int fac[] = { 1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880 };
 
-int Board[9]; int iniPos;
+vector<int> Board; int iniPos;
 
 int cases[362881] = { 0 };
 
 class Step {
 public:
-    int board[9];
+    vector<int> board;
     int depth;
     int pos;
-    Step(int* b, int d, int p){
-        for (int i = 0; i < 9; i++) {
-            board[i] = b[i];
-        }
+    Step(vector<int> b, int d, int p){
+        board = b;
         depth = d;
         pos = p;
     }
@@ -32,7 +30,7 @@ struct CompareStep {
     }
 };
 
-int cantorExpansion(int input[]) {
+int cantorExpansion(vector<int> input) {
     int result = 0;
     for (int i = 0; i < 9; i++) {
         int tmp = 0;
@@ -172,7 +170,7 @@ int main() {
     for (int i = 0; i < 9; i++) {
         char x;
         cin >> x;
-        Board[i] = x - '0';
+        Board.push_back(x - '0');
         if (Board[i] == 0) {
             iniPos = i;
         }
