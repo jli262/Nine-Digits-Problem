@@ -9,7 +9,7 @@ const int fac[] = { 1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880 };
 
 vector<int> Board; int iniPos;
 
-int cases[362881] = { 0 };
+int cases[362881];
 
 class Step {
 public:
@@ -26,13 +26,13 @@ public:
 struct CompareStep {
     bool operator()(Step const& s1, Step const& s2)
     {
-        return s1.depth < s2.depth;
+        return s1.depth > s2.depth;
     }
 };
 
 int cantorExpansion(vector<int> input) {
     int result = 0;
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 8; i++) {
         int tmp = 0;
         for (int j = i + 1; j < 9; j++) {
             if (input[j] < input[i]) {
@@ -46,10 +46,21 @@ int cantorExpansion(vector<int> input) {
 
 vector<int> reverseCantor(int input) {
     vector<int> result;
+    bool isChosen[9] = { 0 };
     for (int i = 0; i < 9; i++) {
+        int count = 0;
         int tmp = input / fac[8 - i];
         input %= fac[8 - i];
-        result.push_back(i + tmp);
+        for (int j = 0; j < 9; j++) {
+            if (!isChosen[j]) {
+                count++;
+            }
+            if (count == tmp + 1) {
+                result.push_back(j);
+                isChosen[j] = 1;
+                break;
+            }
+        }
     }
     return result;
 }
@@ -57,13 +68,16 @@ vector<int> reverseCantor(int input) {
 void BFS() {
     priority_queue<Step, vector<Step>, CompareStep> pq;
     Step ini = Step(Board, 0, iniPos);
-    cases[cantorExpansion(Board)] = -1;
+    cases[cantorExpansion(Board)] = cantorExpansion(Board);
     pq.push(ini);
 
     while (!pq.empty()) {
         Step s = pq.top();
         pq.pop();
         int cantor = cantorExpansion(s.board);
+        if (cantor == 0) {
+            return;
+        }
         int pos = s.pos;
         int x = pos % 3;
         int y = pos / 3;
@@ -80,7 +94,7 @@ void BFS() {
                 cases[tmpCantor] = cantor;
                 return;
             }
-            if (cases[tmpCantor] == 0) {
+            if (cases[tmpCantor] == -1) {
                 tmpS.depth++;
                 tmpS.pos = tmpPos;
                 cases[tmpCantor] = cantor;
@@ -99,7 +113,7 @@ void BFS() {
                 cases[tmpCantor] = cantor;
                 return;
             }
-            if (cases[tmpCantor] == 0) {
+            if (cases[tmpCantor] == -1) {
                 tmpS.depth++;
                 tmpS.pos = tmpPos;
                 cases[tmpCantor] = cantor;
@@ -118,7 +132,7 @@ void BFS() {
                 cases[tmpCantor] = cantor;
                 return;
             }
-            if (cases[tmpCantor] == 0) {
+            if (cases[tmpCantor] == -1) {
                 tmpS.depth++;
                 tmpS.pos = tmpPos;
                 cases[tmpCantor] = cantor;
@@ -137,7 +151,7 @@ void BFS() {
                 cases[tmpCantor] = cantor;
                 return;
             }
-            if (cases[tmpCantor] == 0) {
+            if (cases[tmpCantor] == -1) {
                 tmpS.depth++;
                 tmpS.pos = tmpPos;
                 cases[tmpCantor] = cantor;
@@ -150,7 +164,7 @@ void BFS() {
 void print() {
     stack<char> opr;
     int cur = 0;
-    while (cases[cur] != -1) {
+    while (cases[cur] != cur) {
         vector<int> board = reverseCantor(cur);
         for (int i = 0; i < 9; i++) {
             if (board[i] == 0) {
@@ -167,6 +181,8 @@ void print() {
 
 int main() {
     //315027684
+    memset(cases, -1, sizeof(cases));
+
     for (int i = 0; i < 9; i++) {
         char x;
         cin >> x;
